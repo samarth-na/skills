@@ -1,0 +1,100 @@
+<!--
+  NAVIGATION — TOC, rail, crumbs, pager.
+
+  USE WHEN: the document has more than five sections or spans multiple parts.
+  RULE: every TOC link target exists as an id. Keep the TOC in sync by hand.
+  CUT: a TOC for documents under ~40 lines.
+-->
+
+<!-- ============================================================
+     Inline TOC (top of the document)
+     ============================================================ -->
+<nav class="c-toc" aria-label="Contents">
+  <span class="c-toc-title">Contents</span>
+  <ol>
+    <li><a href="#s1">1. Executive summary</a></li>
+    <li>
+      <a href="#s2">2. Sources and method</a>
+      <ol>
+        <li><a href="#s2-1">2.1 What I read</a></li>
+        <li><a href="#s2-2">2.2 How sessions and commits relate</a></li>
+      </ol>
+    </li>
+    <li><a href="#s3">3. Timeline at a glance</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================
+     Sticky TOC rail (inside .c-rail — see layout.html)
+     Wide viewports show it in the right margin. Narrow viewports show it as a
+     tick strip on the right edge that opens as a popup on hover or focus.
+     Include the scroll-spy JS at the end of this file when used.
+     ============================================================ -->
+<div class="c-rail">
+  <div class="c-rail-main">
+    <section class="c-section" id="s1">…</section>
+    <section class="c-section" id="s2">…</section>
+    <section class="c-section" id="s3">…</section>
+  </div>
+  <aside class="c-rail-side">
+    <nav class="c-toc-rail c-rail-sticky" aria-label="Sections">
+      <span class="c-toc-title">Sections</span>
+      <ol>
+        <li><a href="#s1">1. Executive summary</a></li>
+        <li><a href="#s2">2. Sources and method</a></li>
+        <li><a href="#s3">3. Timeline at a glance</a></li>
+      </ol>
+    </nav>
+  </aside>
+</div>
+
+<!-- ============================================================
+     Breadcrumbs
+     ============================================================ -->
+<nav class="c-crumbs" aria-label="Breadcrumb">
+  <a href="#top">Archive</a>
+  <a href="#top">Reports</a>
+  <span>Production finalization</span>
+</nav>
+
+<!-- ============================================================
+     Pager — previous / next in a series
+     ============================================================ -->
+<nav class="c-pager" aria-label="Document navigation">
+  <a class="c-pager-link c-pager-prev" href="#prev">
+    <span class="c-pager-dir">Previous</span>
+    <span class="c-pager-title">Cloud Workspace — Development History</span>
+  </a>
+  <a class="c-pager-link c-pager-next" href="#next">
+    <span class="c-pager-dir">Next</span>
+    <span class="c-pager-title">Basics of the Unix Philosophy</span>
+  </a>
+</nav>
+
+<!-- ============================================================
+     Back to top
+     ============================================================ -->
+<a class="c-top" href="#top" aria-label="Back to top">↑ Top</a>
+
+<!-- ============================================================
+     Scroll-spy JS — include once when a .c-toc-rail exists
+     ============================================================ -->
+<script>
+  (function () {
+    var links = document.querySelectorAll('.c-toc-rail a[href^="#"]');
+    if (!links.length || !window.IntersectionObserver) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove("is-active"); });
+        if (map[en.target.id]) map[en.target.id].classList.add("is-active");
+      });
+    }, { rootMargin: "-10% 0px -70% 0px" });
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  })();
+</script>

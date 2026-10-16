@@ -1,0 +1,88 @@
+<!--
+  LAYOUT — containers and page regions.
+
+  USE WHEN: shaping the page. Pick the smallest container that fits the content.
+  RULE: prose sits in .c-wrap or .c-wrap--measure. Never set widths on content itself.
+  CUT: any region that has no content.
+-->
+
+<!-- ============================================================
+     Containers
+     ============================================================ -->
+
+<!-- Default container: centers content at --c-wrap -->
+<div class="c-wrap">…</div>
+
+<!-- Narrow container: single column of prose at --c-measure -->
+<div class="c-wrap c-wrap--measure">…</div>
+
+<!-- Section: vertical rhythm block. id targets the TOC. -->
+<section class="c-section" id="s1">
+  <div class="c-wrap">…</div>
+</section>
+
+<section class="c-section c-section--tight">…</section>
+<section class="c-section c-section--flush-top">…</section>
+
+<!-- ============================================================
+     Stacks and grids
+     ============================================================ -->
+
+<!-- Stack: children in a column with even gaps -->
+<div class="c-stack">…</div>
+<div class="c-stack c-stack--tight">…</div>
+<div class="c-stack c-stack--loose">…</div>
+
+<!-- Grid: auto-fitting cards. Fixed columns collapse to one on small screens. -->
+<div class="c-grid">…</div>
+<div class="c-grid c-grid--2">…</div>
+<div class="c-grid c-grid--3">…</div>
+
+<!-- ============================================================
+     Regions
+     ============================================================ -->
+
+<!-- Split: sidebar (filters, meta, nav) + main content -->
+<div class="c-split">
+  <aside class="c-split-side">…</aside>
+  <div class="c-split-main">…</div>
+</div>
+
+<!-- Split with the sidebar on the right -->
+<div class="c-split c-split--flip">
+  <div class="c-split-main">…</div>
+  <aside class="c-split-side">…</aside>
+</div>
+
+<!-- Rail: centered content column + TOC/aside parked in the right margin.
+     The content column centers at --c-rail-main (56rem) and never loses width
+     to the rail. At >= 89rem the rail sits out of flow in the right margin.
+     Below that it collapses to a fixed tick strip on the right edge that opens
+     the full TOC on hover or keyboard focus. -->
+<div class="c-rail">
+  <div class="c-rail-main">…</div>
+  <aside class="c-rail-side">
+    <div class="c-rail-sticky">…</div>
+  </aside>
+</div>
+
+<!-- ============================================================
+     Cards
+     ============================================================ -->
+
+<div class="c-card">
+  <p class="c-card-title"><strong>Card title</strong></p>
+  <p>Grouped facts or one idea in a box.</p>
+</div>
+
+<div class="c-card c-card--flat">Quieter box, no visible border.</div>
+<div class="c-card c-card--accent">Highlighted box.</div>
+
+<!-- Clickable card: whole box is the link -->
+<a class="c-card c-card--link" href="#s2">
+  <p><strong>Linked card</strong></p>
+  <p class="c-small c-mute">The whole card is the hit target.</p>
+</a>
+
+<!-- Full-bleed row at container width inside a wider parent -->
+<div class="c-bleed">…</div>
