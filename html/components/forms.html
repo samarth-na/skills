@@ -1,0 +1,57 @@
+<!--
+  FORMS — inputs, choices, buttons.
+
+  USE WHEN: the page collects input — checklists, config builders, quizzes.
+  RULE: every input has a real <label>. Hints explain format, not decoration.
+  CUT: forms that submit nowhere. A form on a static page acts locally or not at all.
+-->
+
+<form class="c-form" novalidate>
+  <!-- Text field -->
+  <div class="c-field">
+    <label class="c-label" for="name">Workspace name</label>
+    <input class="c-input" id="name" name="name" type="text" placeholder="cloud-workspace" />
+    <span class="c-hint">Lowercase letters and dashes.</span>
+  </div>
+
+  <!-- Field with error -->
+  <div class="c-field c-field--error">
+    <label class="c-label" for="email">Email</label>
+    <input class="c-input" id="email" name="email" type="email" value="not-an-email" />
+    <span class="c-hint c-hint--error">Enter a valid email address.</span>
+  </div>
+
+  <!-- Select -->
+  <div class="c-field">
+    <label class="c-label" for="env">Environment</label>
+    <select class="c-select" id="env" name="env">
+      <option>dev</option>
+      <option>staging</option>
+      <option>production</option>
+    </select>
+  </div>
+
+  <!-- Textarea -->
+  <div class="c-field">
+    <label class="c-label" for="notes">Notes</label>
+    <textarea class="c-textarea" id="notes" name="notes"></textarea>
+  </div>
+
+  <!-- Choices -->
+  <fieldset class="c-fieldset">
+    <legend class="c-label">Verification</legend>
+    <label class="c-check"><input type="checkbox" checked /> Typecheck passes</label>
+    <label class="c-check"><input type="checkbox" /> Browser round-trip</label>
+    <label class="c-radio"><input type="radio" name="mode" checked /> Static</label>
+    <label class="c-radio"><input type="radio" name="mode" /> Live</label>
+  </fieldset>
+
+  <!-- Buttons -->
+  <div class="c-row">
+    <button class="c-btn c-btn--primary" type="submit">Run checks</button>
+    <button class="c-btn" type="button">Reset</button>
+    <button class="c-btn c-btn--ghost" type="button">Cancel</button>
+    <button class="c-btn c-btn--danger" type="button">Delete</button>
+    <button class="c-btn c-btn--sm" type="button">Small</button>
+  </div>
+</form>

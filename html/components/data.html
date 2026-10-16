@@ -1,0 +1,105 @@
+<!--
+  DATA — tables, numbers, charts, timelines.
+
+  USE WHEN: the reader compares values or scans quantities.
+  RULE: numbers right-align with class c-num. Tables need a real <thead>.
+  CUT: charts that encode fewer than three values — use chips or a sentence.
+  Per-instance value: style="--v: 62%" on fills. No other inline styles.
+-->
+
+<!-- ============================================================
+     Table
+     ============================================================ -->
+<div class="c-table-wrap">
+  <table class="c-table">
+    <thead>
+      <tr><th>Check</th><th>Result</th><th class="c-num">Time</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Typecheck</td><td><span class="c-chip c-chip--ok">Pass</span></td><td class="c-num">12s</td></tr>
+      <tr><td>Signed-out login</td><td><span class="c-chip c-chip--warn">Re-verify</span></td><td class="c-num">—</td></tr>
+      <tr><td>TURN relay</td><td><span class="c-chip c-chip--danger">Absent</span></td><td class="c-num">—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Dense table for long indexes (commit lists, session lists) -->
+<div class="c-table-wrap">
+  <table class="c-table c-table--dense">
+    <thead>
+      <tr><th>Commit</th><th>Subject</th><th class="c-num">+ / −</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="c-chip c-chip--mono">e50c99d</span></td><td>five landing pages plus switcher</td><td class="c-num">+1,066 / −0</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================
+     Stat strip — headline numbers
+     ============================================================ -->
+<div class="c-stats">
+  <div class="c-stat"><span class="c-stat-value">71</span><span class="c-stat-label">days</span></div>
+  <div class="c-stat"><span class="c-stat-value">46</span><span class="c-stat-label">sessions</span></div>
+  <div class="c-stat"><span class="c-stat-value">40</span><span class="c-stat-label">commits</span></div>
+  <div class="c-stat"><span class="c-stat-value">$0.43</span><span class="c-stat-label">model spend</span></div>
+</div>
+
+<!-- ============================================================
+     Bar chart — proportions with labels
+     ============================================================ -->
+<div class="c-bars">
+  <div class="c-bar">
+    <span class="c-bar-label">Chat realtime</span>
+    <span class="c-bar-track"><span class="c-bar-fill" style="--v: 62%"></span></span>
+    <span class="c-bar-value">62%</span>
+  </div>
+  <div class="c-bar">
+    <span class="c-bar-label">Data layer</span>
+    <span class="c-bar-track"><span class="c-bar-fill c-bar-fill--ok" style="--v: 24%"></span></span>
+    <span class="c-bar-value">24%</span>
+  </div>
+  <div class="c-bar">
+    <span class="c-bar-label">UI polish</span>
+    <span class="c-bar-track"><span class="c-bar-fill c-bar-fill--warn" style="--v: 14%"></span></span>
+    <span class="c-bar-value">14%</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     Meter — one quantity toward a limit
+     ============================================================ -->
+<div>
+  <p class="c-small">Free-tier tokens: 81.96 M of 100 M</p>
+  <div class="c-meter"><span class="c-meter-fill" style="--v: 82%"></span></div>
+</div>
+
+<!-- ============================================================
+     Timeline — phases, history, sequences with dates
+     ============================================================ -->
+<ol class="c-timeline">
+  <li class="c-timeline-item">
+    <span class="c-timeline-date">June 20</span>
+    <h3 class="c-timeline-title">Scaffold and first pixels</h3>
+    <p>First commit; the page rendered, and nothing was wired.</p>
+  </li>
+  <li class="c-timeline-item">
+    <span class="c-timeline-date">August 24</span>
+    <h3 class="c-timeline-title">Content becomes real</h3>
+    <p>JSON centralization; the copy stopped being placeholder text.</p>
+  </li>
+</ol>
+
+<!-- ============================================================
+     Comparison — before / after
+     ============================================================ -->
+<div class="c-compare">
+  <div class="c-compare-pane c-compare-pane--before">
+    <span class="c-compare-label">Before</span>
+    <p>Verification meant <code>curl</code> returned 200.</p>
+  </div>
+  <div class="c-compare-pane c-compare-pane--after">
+    <span class="c-compare-label">After</span>
+    <p>Verification means a real browser chat round-trip.</p>
+  </div>
+</div>

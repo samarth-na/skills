@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Excalidraw local editor</title>
+
+<!--
+  Local Excalidraw editor. Open, edit, and save .excalidraw files on disk.
+
+  The editor runtime loads from a CDN, so the first open needs network access.
+  Files never leave the browser.
+
+  To preview a specific scene without picking a file, set the global before the
+  module script runs:
+
+    <script>window.__EXCALIDRAW_SCENE__ = { "type": "excalidraw", "version": 2, ... };</script>
+-->
+<script>
+  window.__EXCALIDRAW_SCENE__ = window.__EXCALIDRAW_SCENE__ || null;
+</script>
+
+<link rel="stylesheet" href="https://unpkg.com/@excalidraw/excalidraw@0.18.1/dist/prod/index.css" />
+
+<style>
+  :root { color-scheme: light dark; }
+  html, body, #root { margin: 0; height: 100%; font: 13px/1.4 system-ui, sans-serif; }
+  .app { display: flex; flex-direction: column; height: 100%; }
+  .bar {
+    display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    background: color-mix(in srgb, Canvas 96%, currentColor 4%);
+    flex: 0 0 auto;
+  }
+  .bar button {
+    font: inherit; padding: 4px 10px; border-radius: 6px; cursor: pointer;
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    background: transparent; color: inherit;
+  }
+  .bar button:disabled { opacity: .45; cursor: default; }
+  .name { font-weight: 600; }
+  .status { opacity: .7; margin-left: auto; }
+  .editor { flex: 1 1 auto; position: relative; min-height: 0; }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.2.0",
+    "react/jsx-runtime": "https://esm.sh/react@19.2.0/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@19.2.0?external=react",
+    "react-dom/client": "https://esm.sh/react-dom@19.2.0/client?external=react",
+    "@excalidraw/excalidraw": "https://esm.sh/@excalidraw/excalidraw@0.18.1?external=react,react-dom"
+  }
+}
+</script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+import React, { useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { Excalidraw, serializeAsJSON, restore } from "@excalidraw/excalidraw";
+
+const { Fragment, createElement: h } = React;
+const hasFsAccess = typeof window.showOpenFilePicker === "function";
+
+// Programmatic scene updates (initial load, loadScene, viewer.load) fire
+// onChange too. Ignore changes for a short window after them so they do not
+// mark the scene dirty. A counter can't work here: the burst size varies and
+// a leftover count would swallow a genuine later edit.
+const suppressUntil = { t: 0 };
+const programmaticSceneUpdate = () => { suppressUntil.t = Date.now() + 1200; };
+
+function App() {
+  const apiRef = useRef(null);
+  const handleRef = useRef(null);
+  const [ready, setReady] = useState(false);
+  const [name, setName] = useState("Untitled.excalidraw");
+  const [status, setStatus] = useState("loading editor…");
+  const [dirty, setDirty] = useState(false);
+
+
+  const payload = () => {
+    const api = apiRef.current;
+    return serializeAsJSON(api.getSceneElements(), api.getAppState(), api.getFiles(), "local");
+  };
+
+  const loadScene = (scene, label, handle) => {
+    const api = apiRef.current;
+    if (!api) return;
+    programmaticSceneUpdate();
+    const elements = restore(
+      { elements: scene.elements, appState: scene.appState, files: scene.files },
+      null,
+      null
+    ).elements;
+    api.updateScene({ elements });
+    if (scene.files) api.addFiles(Object.values(scene.files));
+    if (scene.appState && scene.appState.viewBackgroundColor) {
+      api.updateScene({ appState: { viewBackgroundColor: scene.appState.viewBackgroundColor } });
+    }
+    handleRef.current = handle || null;
+    setName(label || "Untitled.excalidraw");
+    setDirty(false);
+    setStatus("loaded");
+    api.scrollToContent(elements, { fitToContent: true });
+  };
+
+  // When served over http (e.g. a local static server), allow
+  // viewer.html?scene=<file>.excalidraw to load a sibling scene file.
+  // This never touches excalidraw.com or its storage.
+  const sceneParam = new URLSearchParams(window.location.search).get("scene");
+  if (sceneParam && !window.__EXCALIDRAW_SCENE__) {
+    fetch(sceneParam).then((r) => {
+      if (!r.ok) throw new Error("scene fetch failed: " + r.status);
+      return r.json();
+    }).then((scene) => {
+      const tick = () => {
+        if (window.__excalidrawLoadScene) window.__excalidrawLoadScene(scene, sceneParam, null);
+        else setTimeout(tick, 200);
+      };
+      tick();
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
+
+  const openFile = async () => {
+    try {
+      if (hasFsAccess) {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{ description: "Excalidraw", accept: { "application/json": [".excalidraw"] } }],
+        });
+        const file = await handle.getFile();
+        loadScene(JSON.parse(await file.text()), file.name, handle);
+      } else {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".excalidraw,application/json";
+        input.onchange = async () => {
+          const file = input.files && input.files[0];
+          if (file) loadScene(JSON.parse(await file.text()), file.name, null);
+        };
+        input.click();
+      }
+    } catch (err) {
+      if (err && err.name !== "AbortError") setStatus("open failed: " + err.message);
+    }
+  };
+
+  const writeTo = async (handle) => {
+    const writable = await handle.createWritable();
+    await writable.write(payload());
+    await writable.close();
+    handleRef.current = handle;
+    setName(handle.name);
+    setDirty(false);
+    setStatus("saved " + new Date().toLocaleTimeString());
+  };
+
+  const saveAs = async () => {
+    try {
+      if (hasFsAccess) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: name,
+          types: [{ description: "Excalidraw", accept: { "application/json": [".excalidraw"] } }],
+        });
+        await writeTo(handle);
+      } else {
+        const blob = new Blob([payload()], { type: "application/vnd.excalidraw+json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        setStatus("downloaded - replace the canonical .excalidraw file with it");
+      }
+    } catch (err) {
+      if (err && err.name !== "AbortError") setStatus("save failed: " + err.message);
+    }
+  };
+
+  const save = async () => {
+    if (handleRef.current) {
+      try {
+        await writeTo(handleRef.current);
+      } catch (err) {
+        setStatus("save failed: " + err.message);
+      }
+    } else {
+      await saveAs();
+    }
+  };
+
+  const openRef = useRef(openFile);
+  const saveRef = useRef(save);
+  const saveAsRef = useRef(saveAs);
+  openRef.current = openFile;
+  saveRef.current = save;
+  saveAsRef.current = saveAs;
+
+  // Ctrl/Cmd+S saves to the open file instead of the Excalidraw default.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        e.stopPropagation();
+        saveRef.current();
+      }
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, []);
+
+  const initialData = window.__EXCALIDRAW_SCENE__ || undefined;
+
+  return h(Fragment, null,
+    h("div", { className: "app" },
+      h("div", { className: "bar" },
+        h("button", { onClick: () => openRef.current() }, "Open…"),
+        h("button", { disabled: !ready, onClick: () => saveRef.current() }, "Save"),
+        h("button", { disabled: !ready, onClick: () => saveAsRef.current() }, "Save as…"),
+        h("span", { className: "name" }, name),
+        h("span", { className: "status" }, (dirty ? "● unsaved · " : "") + status)
+      ),
+      h("div", { className: "editor" },
+        h(Excalidraw, {
+          excalidrawAPI: (api) => {
+            apiRef.current = api;
+            window.__excalidrawApi = api;
+            window.__excalidrawLoadScene = loadScene;
+            programmaticSceneUpdate();
+            setReady(true);
+            setDirty(false);
+            setStatus("ready");
+          },
+          initialData,
+          name,
+          onChange: () => { if (Date.now() < suppressUntil.t) return; setDirty(true); },
+        })
+      )
+    )
+  );
+}
+
+const root = createRoot(document.getElementById("root"));
+root.render(h(App));
+
+// Allow automation or a host page to load a scene without the file picker.
+// Delegates to loadScene so name, status, and the dirty flag stay consistent.
+window.excalidrawViewer = {
+  load: (scene, label) => {
+    if (!window.__excalidrawLoadScene) throw new Error("editor not ready");
+    window.__excalidrawLoadScene(scene, label || "loaded", null);
+    return label || "loaded";
+  },
+};
+</script>
+</body>
+</html>

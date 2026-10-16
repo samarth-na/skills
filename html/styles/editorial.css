@@ -1,0 +1,120 @@
+/* html-skill: skin
+   editorial.css — warm paper, serif reading.
+   Paste after base.css. Never edit the pasted copy.
+   Markup and class names are unchanged. */
+
+:root {
+  --c-bg: #faf6ee;
+  --c-bg-elev: #fffdf8;
+  --c-bg-sunken: #f1ebdd;
+  --c-bg-inset: #e7dfcc;
+
+  --c-ink: #221f18;
+  --c-ink-soft: #4e463a;
+  --c-ink-mute: #877b68;
+
+  --c-line: #e3dac6;
+  --c-line-strong: #c8bca2;
+
+  --c-accent: #93502c;
+  --c-accent-fg: #fffdf8;
+  --c-accent-soft: #f3e4d7;
+
+  --c-ok: #4a6b2f;
+  --c-ok-soft: #e9eddc;
+  --c-warn: #946200;
+  --c-warn-soft: #f5e8c8;
+  --c-danger: #a53a2c;
+  --c-danger-soft: #f6e0da;
+  --c-info: #4c5f77;
+  --c-info-soft: #e4e8ee;
+
+  --c-code-bg: #f1ebdd;
+  --c-code-ink: #2e2820;
+
+  --c-font-sans: "Iowan Old Style", Georgia, "Times New Roman", serif;
+
+  --c-radius-sm: 2px;
+  --c-radius-md: 4px;
+  --c-radius-lg: 8px;
+
+  --c-measure: 40rem;
+}
+
+[data-theme="dark"] {
+  --c-bg: #17140f;
+  --c-bg-elev: #1e1a13;
+  --c-bg-sunken: #13100b;
+  --c-bg-inset: #262017;
+  --c-ink: #ece5d8;
+  --c-ink-soft: #c3b8a4;
+  --c-ink-mute: #978b75;
+  --c-line: #2e271c;
+  --c-line-strong: #453b2a;
+  --c-accent: #dd9463;
+  --c-accent-fg: #17140f;
+  --c-accent-soft: #33230f;
+  --c-ok: #a4c277;
+  --c-ok-soft: #21260f;
+  --c-warn: #d9ab4d;
+  --c-warn-soft: #2c2208;
+  --c-danger: #e28570;
+  --c-danger-soft: #2e150f;
+  --c-info: #93a9c2;
+  --c-info-soft: #16202b;
+  --c-code-bg: #262017;
+  --c-code-ink: #ded4c2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --c-bg: #17140f;
+    --c-bg-elev: #1e1a13;
+    --c-bg-sunken: #13100b;
+    --c-bg-inset: #262017;
+    --c-ink: #ece5d8;
+    --c-ink-soft: #c3b8a4;
+    --c-ink-mute: #978b75;
+    --c-line: #2e271c;
+    --c-line-strong: #453b2a;
+    --c-accent: #dd9463;
+    --c-accent-fg: #17140f;
+    --c-accent-soft: #33230f;
+    --c-ok: #a4c277;
+    --c-ok-soft: #21260f;
+    --c-warn: #d9ab4d;
+    --c-warn-soft: #2c2208;
+    --c-danger: #e28570;
+    --c-danger-soft: #2e150f;
+    --c-info: #93a9c2;
+    --c-info-soft: #16202b;
+    --c-code-bg: #262017;
+    --c-code-ink: #ded4c2;
+  }
+}
+
+/* Serif headings carry more weight in this language. */
+h1, h2, h3, .c-title {
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.c-title { letter-spacing: -0.015em; }
+
+/* Softer chrome: the editorial look keeps panels quiet. */
+.c-card,
+.c-toc,
+.c-acc,
+.c-codeblock,
+.c-diff,
+.c-table-wrap,
+.c-stats,
+.c-compare-pane {
+  border-color: var(--c-line-strong);
+}
+
+.c-quote {
+  font-style: italic;
+  background: none;
+  border-radius: 0;
+}

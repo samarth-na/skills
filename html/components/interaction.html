@@ -1,0 +1,121 @@
+<!--
+  INTERACTION — disclosure, dialogs, tooltips, filtering, tabs.
+
+  USE WHEN: the reader needs to reveal, filter, or switch content.
+  RULE: interaction is progressive — content must survive without JS.
+  CUT: accordions around fewer than three lines; dialogs for one sentence.
+-->
+
+<!-- ============================================================
+     Accordion (<details>) — appendices, long evidence, FAQs
+     ============================================================ -->
+<details class="c-acc">
+  <summary>Appendix — full session index</summary>
+  <div class="c-acc-body">
+    <p>Folded content stays in the document, so Ctrl+F and print still see it.</p>
+  </div>
+</details>
+
+<details class="c-acc">
+  <summary>Why the model tier mattered</summary>
+  <div class="c-acc-body">
+    <p>One paragraph per reason.</p>
+  </div>
+</details>
+
+<!-- ============================================================
+     Dropdown menu (<details>)
+     ============================================================ -->
+<details class="c-drop">
+  <summary>Actions</summary>
+  <div class="c-drop-body">
+    <a class="c-drop-item" href="#s1">Copy link</a>
+    <a class="c-drop-item" href="#s2">Jump to sources</a>
+  </div>
+</details>
+
+<!-- Right-aligned menu: add c-drop--right near the right viewport edge. -->
+
+<!-- ============================================================
+     Tooltip — plain attribute, no JS
+     ============================================================ -->
+<p>
+  <button class="c-btn c-btn--sm" type="button" data-tip="Runs the full verification suite">Hover me</button>
+</p>
+
+<!-- ============================================================
+     Dialog — confirmations, detail views
+     Open with JS: document.getElementById("dlg").showModal()
+     ============================================================ -->
+<dialog class="c-dialog" id="dlg">
+  <div class="c-dialog-head">
+    <h2 class="c-dialog-title">Deploy details</h2>
+    <button class="c-btn c-btn--sm c-dialog-close" type="button" data-close>Close</button>
+  </div>
+  <div class="c-dialog-body">
+    <p>Body content.</p>
+  </div>
+</dialog>
+<button class="c-btn" type="button" data-open="dlg">Open dialog</button>
+<script>
+  document.addEventListener("click", function (e) {
+    var open = e.target.closest("[data-open]");
+    if (open) { document.getElementById(open.getAttribute("data-open")).showModal(); return; }
+    if (e.target.closest("[data-close]")) e.target.closest("dialog").close();
+  });
+</script>
+
+<!-- ============================================================
+     Filter list — search over items, no submit
+     ============================================================ -->
+<label class="c-visually-hidden" for="f">Filter sessions</label>
+<input class="c-filter" id="f" type="search" placeholder="Filter sessions…" data-c-filter="flist" />
+<ul class="c-filter-list" id="flist">
+  <li class="c-filter-item">Chat realtime — 12 sessions</li>
+  <li class="c-filter-item">Data layer — 6 sessions</li>
+  <li class="c-filter-item">UI polish — 9 sessions</li>
+</ul>
+<script>
+  document.querySelectorAll("[data-c-filter]").forEach(function (input) {
+    var list = document.getElementById(input.getAttribute("data-c-filter"));
+    input.addEventListener("input", function () {
+      var q = input.value.trim().toLowerCase();
+      list.querySelectorAll(".c-filter-item").forEach(function (item) {
+        item.hidden = q !== "" && item.textContent.toLowerCase().indexOf(q) === -1;
+      });
+    });
+  });
+</script>
+
+<!-- ============================================================
+     Tabs — switch panels in place
+     ============================================================ -->
+<div class="c-tabs">
+  <div class="c-tabs-nav" role="tablist" aria-label="Views">
+    <button class="c-tab" role="tab" id="t1" aria-controls="p1" aria-selected="true" type="button">Summary</button>
+    <button class="c-tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" type="button">Commits</button>
+  </div>
+  <div class="c-tab-panel" role="tabpanel" id="p1" aria-labelledby="t1">First panel.</div>
+  <div class="c-tab-panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>Second panel.</div>
+</div>
+<script>
+  document.querySelectorAll(".c-tabs").forEach(function (tabs) {
+    var btns = tabs.querySelectorAll(".c-tab");
+    btns.forEach(function (btn, i) {
+      btn.addEventListener("click", function () {
+        btns.forEach(function (b, j) {
+          b.setAttribute("aria-selected", String(i === j));
+          document.getElementById(b.getAttribute("aria-controls")).hidden = i !== j;
+        });
+      });
+      btn.addEventListener("keydown", function (e) {
+        var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var next = btns[(i + d + btns.length) % btns.length];
+        next.focus();
+        next.click();
+      });
+    });
+  });
+</script>

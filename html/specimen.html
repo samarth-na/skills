@@ -278,6 +278,10 @@
 
       figure { margin: 0; }
 
+      /* Long words and URLs wrap instead of forcing page-level sideways scroll.
+         thead th keeps nowrap on purpose: wide tables scroll inside .c-table-wrap. */
+      :where(p, li, dd, dt, td, figcaption) { overflow-wrap: break-word; }
+
       table {
         border-collapse: collapse;
         width: 100%;
@@ -400,15 +404,17 @@
 
       .c-rail > .c-rail-side { min-width: 0; order: 2; }
 
-      /* Header and footer follow the centered content column. */
-      body:has(.c-rail) .c-wrap:not(.c-wrap--measure) {
+      /* Header and footer follow the centered content column.
+         Scoped to header/footer only: sections inside main keep the author's width. */
+      body:has(.c-rail) :is(header, footer) .c-wrap:not(.c-wrap--measure) {
         width: min(100%, var(--c-rail-main));
       }
 
       /* Wide layout: park the rail in the right margin, out of flow.
-         Breakpoint = --c-rail-main + 2 * (--c-rail-w + gap) = 89rem.
-         Change the number when you change those tokens. */
-      @media (min-width: 89rem) {
+         Breakpoint = --c-rail-main + 2 * gutter + 2 * (--c-rail-w + gap) = 91.5rem,
+         rounded to 92rem. Change the number when you change those tokens.
+         .c-rail is page-level: do not nest it inside a narrower container. */
+      @media (min-width: 92rem) {
         .c-rail-side {
           position: absolute;
           top: 0;
@@ -426,7 +432,7 @@
       }
 
       .c-bleed {
-        width: min(100vw - 2 * var(--c-gutter), var(--c-wrap));
+        width: min(100%, var(--c-wrap));
         margin-inline: auto;
       }
 
@@ -902,6 +908,12 @@
         font-variant-numeric: tabular-nums;
       }
 
+      /* Narrow: label takes its own row, track and value share the next row. */
+      @media (max-width: 40rem) {
+        .c-bar { grid-template-columns: minmax(0, 1fr) auto; gap: var(--c-space-2) var(--c-space-4); }
+        .c-bar-label { grid-column: 1 / -1; }
+      }
+
       .c-meter {
         height: 0.5rem;
         border-radius: var(--c-radius-full);
@@ -1048,21 +1060,21 @@
         font-weight: 600;
       }
 
-      /* Mini rail (below 89rem): the rail leaves the flow and becomes a thin strip
+      /* Mini rail (below 92rem): the rail leaves the flow and becomes a thin strip
          of tick marks on the right edge. Hover or keyboard focus opens the full TOC
-         as a popup. Above 89rem the wide rail in .c-rail replaces this strip. */
-      @media (max-width: 88.99rem) {
+         as a popup. Above 92rem the wide rail in .c-rail replaces this strip. */
+      @media (max-width: 91.99rem) {
         .c-rail-side .c-toc-rail {
           position: fixed;
           right: 0.3rem;
           top: 50%;
           transform: translateY(-50%);
           z-index: 35;
-          width: 0.95rem;
+          width: 1.75rem;
           max-height: calc(100dvh - var(--c-space-6));
           overflow-y: auto;
           overscroll-behavior: contain;
-          padding: 0;
+          padding: 0.35rem 0;
           background: transparent;
           border: 1px solid transparent;
           border-radius: var(--c-radius-lg);
@@ -1086,11 +1098,13 @@
           padding: 0;
         }
 
-        /* Collapsed: only the tick shows, the label stays hidden. */
+        /* Collapsed: only the tick shows, the label stays hidden.
+           The link keeps a 24px+ hit area; only the tick paint is small. */
         .c-rail-side .c-toc-rail a {
           position: relative;
           display: block;
           height: 1.5rem;
+          min-width: 1.5rem;
           line-height: 1.5rem;
           padding: 0;
           margin: 0;
@@ -1105,10 +1119,10 @@
         .c-rail-side .c-toc-rail a::after {
           content: "";
           position: absolute;
-          right: 0;
+          right: 0.35rem;
           top: 50%;
           transform: translateY(-50%);
-          width: 0.6rem;
+          width: 0.9rem;
           height: 2px;
           border-radius: var(--c-radius-full);
           background: color-mix(in srgb, var(--c-ink-mute) 75%, transparent);
@@ -1116,8 +1130,19 @@
         }
 
         .c-rail-side .c-toc-rail a.is-active::after {
-          width: 0.85rem;
+          width: 1.1rem;
           background: var(--c-ink);
+        }
+
+        /* Touch: no hover exists, so the strip paints as a tappable pill.
+           Tapping a tick focuses its link, which opens the popup via :focus-within;
+           a second tap follows the link. */
+        @media (hover: none) {
+          .c-rail-side .c-toc-rail {
+            background: var(--c-bg-elev);
+            border-color: var(--c-line);
+            box-shadow: var(--c-shadow-sm);
+          }
         }
 
         /* Popup open: show labels, panel background, and the tick on each row. */
@@ -1204,6 +1229,12 @@
       }
 
       .c-tab-panel:focus-visible { outline-offset: 4px; }
+
+      /* Narrow: tabs scroll sideways instead of stacking into many rows. */
+      @media (max-width: 40rem) {
+        .c-tabs-nav { flex-wrap: nowrap; overflow-x: auto; }
+        .c-tab { white-space: nowrap; }
+      }
 
       .c-pager {
         display: grid;
@@ -1355,6 +1386,7 @@
         left: 0;
         z-index: 20;
         min-width: 12rem;
+        max-width: calc(100vw - 2rem);
         background: var(--c-bg-elev);
         border: 1px solid var(--c-line);
         border-radius: var(--c-radius-md);
@@ -1363,6 +1395,9 @@
         display: grid;
         gap: 0.15rem;
       }
+
+      /* Right-aligned variant: use near the right viewport edge. */
+      .c-drop--right .c-drop-body { left: auto; right: 0; }
 
       .c-drop-item {
         display: block;
@@ -1399,6 +1434,17 @@
         white-space: nowrap;
         z-index: 40;
         pointer-events: none;
+      }
+
+      /* Narrow: tooltips wrap instead of clipping past the viewport edge. */
+      @media (max-width: 48rem) {
+        [data-tip]:hover::after,
+        [data-tip]:focus-visible::after {
+          white-space: normal;
+          width: max-content;
+          max-width: 12rem;
+          text-align: center;
+        }
       }
 
       .c-filter {

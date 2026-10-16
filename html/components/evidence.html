@@ -1,0 +1,117 @@
+<!--
+  EVIDENCE — code, diffs, terminals, chips.
+
+  USE WHEN: the claim needs proof — source, commands, output, commit ids.
+  RULE: escape HTML inside <pre> (&lt; &gt; &amp;). Keep excerpts short; cut noise.
+  CUT: the copy button when the text is not meant to be copied (secrets, logs with PII).
+-->
+
+<!-- ============================================================
+     Inline code (no snippet needed — use <code>)
+     ============================================================ -->
+<p>The seed uses <code>signUpEmail</code> to create five login-ready users.</p>
+
+<!-- ============================================================
+     Code block with file label and copy button
+     ============================================================ -->
+<div class="c-codeblock">
+  <div class="c-codeblock-head">
+    <span class="c-codeblock-file">src/chat.ts</span>
+    <span class="c-lang">ts</span>
+    <button class="c-copy" type="button">Copy</button>
+  </div>
+  <pre><code>export function handleSocket(socket: WebSocket) {
+  socket.addEventListener("message", (e) =&gt; route(JSON.parse(String(e.data))));
+}</code></pre>
+</div>
+
+<!-- Plain block: no file, no copy -->
+<div class="c-codeblock">
+  <div class="c-codeblock-head"><span class="c-lang">sh</span></div>
+  <pre><code>bunx tsc --noEmit &amp;&amp; bun run build</code></pre>
+</div>
+
+<!-- ============================================================
+     Diff
+     USE WHEN: showing what changed. Meta line: file + summary (+N/−M).
+     ============================================================ -->
+<div class="c-diff">
+  <div class="c-diff-meta">
+    <span>src/realtime.ts</span>
+    <span>+12 / −4</span>
+  </div>
+  <pre class="c-diff-body"><code><span class="c-diff-line c-diff-line--hunk">@@ -18,6 +18,14 @@</span>
+<span class="c-diff-line c-diff-line--ctx">   const room = env.ROOM.getByName(name);</span>
+<span class="c-diff-line c-diff-line--del">-  socket.send(JSON.stringify({ type: "hello" }));</span>
+<span class="c-diff-line c-diff-line--add">+  socket.send(JSON.stringify({ type: "hello", room: name, ts: Date.now() }));</span></code></pre>
+</div>
+
+<!-- ============================================================
+     Terminal transcript
+     USE WHEN: a command and its real output are the evidence.
+     Keep the window bar title factual (host or tool name).
+     ============================================================ -->
+<div class="c-term">
+  <div class="c-term-bar">
+    <span class="c-shot-dots"><i></i><i></i><i></i></span>
+    <span>zsh — vercel production</span>
+  </div>
+  <pre class="c-term-body"><code><span class="c-term-prompt">$</span> vercel deploy --prod
+<span class="c-term-dim">Inspect: https://vercel.com/…/deployments</span>
+Production: https://cloud-workspace.example.com
+<span class="c-term-prompt">$</span> curl -s https://cloud-workspace.example.com/api/health
+{"ok":true,"durableObject":"ready"}</code></pre>
+</div>
+
+<!-- Terminal error line -->
+<pre class="c-term-body"><code><span class="c-term-err">error: NAPI fatal error in better-sqlite3 under Bun</span></code></pre>
+
+<!-- ============================================================
+     Chips — commits, sessions, statuses
+     ============================================================ -->
+<p>
+  <span class="c-chip c-chip--mono">5ed5b33</span>
+  <span class="c-chip">commit</span>
+  <span class="c-chip c-chip--accent">session</span>
+  <span class="c-chip c-chip--ok">verified</span>
+  <span class="c-chip c-chip--warn">re-verify</span>
+  <span class="c-chip c-chip--danger">failed</span>
+  <span class="c-chip c-chip--sm">small</span>
+</p>
+
+<!-- Commit card: chip row + subject + stats -->
+<div class="c-card">
+  <p class="c-card-title">
+    <span class="c-chip c-chip--mono">70bcd12</span>
+    <strong>add component library and /ui showcase</strong>
+  </p>
+  <p class="c-small c-mute">21 files · +1,004 / −0 · August 24, 2026</p>
+</div>
+
+<!-- ============================================================
+     File tree — plain <pre>, no special class
+     ============================================================ -->
+<div class="c-codeblock">
+  <div class="c-codeblock-head"><span class="c-codeblock-file">cloud-workspace</span></div>
+  <pre><code>src/
+  chat.ts        routing for chat frames
+  realtime.ts    socket accept + join
+worker/          Cloudflare Worker entry</code></pre>
+</div>
+
+<!-- ============================================================
+     Copy button JS — include once, only if any .c-copy exists
+     ============================================================ -->
+<script>
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".c-copy");
+    if (!btn) return;
+    var block = btn.closest(".c-codeblock, .c-diff, .c-term");
+    var text = block ? block.innerText : "";
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () {
+      btn.dataset.copied = "true";
+      btn.textContent = "Copied";
+      setTimeout(function () { delete btn.dataset.copied; btn.textContent = "Copy"; }, 1500);
+    });
+  });
+</script>

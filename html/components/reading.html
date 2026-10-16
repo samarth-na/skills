@@ -1,0 +1,104 @@
+<!--
+  READING — prose, emphasis, callouts, judgments.
+
+  USE WHEN: writing body content. One idea per paragraph.
+  RULE: heading levels are structural, never chosen for size. Exactly one h1.
+  CUT: callouts that repeat the paragraph above them.
+-->
+
+<!-- ============================================================
+     Headings with anchors
+     Use for every h2/h3 in documents long enough to link into.
+     ============================================================ -->
+<h2 id="s1"><a class="c-hlink" href="#s1" aria-label="Link to section 1">§</a>1. Executive summary</h2>
+<h3 id="s1-1"><a class="c-hlink" href="#s1-1" aria-label="Link to section 1.1">§</a>1.1 What I read</h3>
+
+<!-- ============================================================
+     Prose
+     ============================================================ -->
+
+<p class="c-lead">A lead paragraph: the one-sentence version for scanners.</p>
+
+<p>Body text. Inline <code>code</code>, <strong>strong</strong>, <em>emphasis</em>,
+<abbr title="Durable Object">DO</abbr>, <kbd>Ctrl</kbd>+<kbd>S</kbd>, and <mark>highlighted words</mark>.</p>
+
+<p class="c-small c-mute">Small muted line: captions, timestamps, caveats.</p>
+
+<hr />
+
+<!-- ============================================================
+     Quote
+     USE WHEN: someone's exact words matter. Attribute in the source line.
+     ============================================================ -->
+<blockquote class="c-quote">
+  <p>The AI treats your local dev environment as the production source of truth.</p>
+  <span class="c-quote-source">— Session transcript, September 12</span>
+</blockquote>
+
+<!-- ============================================================
+     Definition list
+     USE WHEN: term/definition pairs — glossaries, API fields, config keys.
+     ============================================================ -->
+<dl class="c-dl">
+  <dt>Durable Object</dt>
+  <dd>Single-threaded state machine that owns one live chat room.</dd>
+</dl>
+
+<!-- Two-column terms (collapses to one column on small screens) -->
+<dl class="c-dl c-dl--terms">
+  <dt>SUP-1042</dt>
+  <dd>Ticket with an SLA breach flag.</dd>
+  <dt>Turso</dt>
+  <dd>libsql database backing the API.</dd>
+</dl>
+
+<!-- ============================================================
+     Callouts
+     USE WHEN: the reader must not miss a constraint, risk, or caveat.
+     note = neutral fact · tip = helps · warn = risk · danger = harm · caveat = honest limit
+     ============================================================ -->
+<aside class="c-callout c-callout--note">
+  <span class="c-callout-title">Note</span>
+  <p>Sessions were often held open across hours, so wall-clock overstates active work.</p>
+</aside>
+
+<aside class="c-callout c-callout--tip">
+  <span class="c-callout-title">Tip</span>
+  <p>Stay on <code>@libsql/client</code>; do not switch drivers.</p>
+</aside>
+
+<aside class="c-callout c-callout--warn">
+  <span class="c-callout-title">Warning</span>
+  <p>Opening two windows starts two sockets; broadcasts arrive twice.</p>
+</aside>
+
+<aside class="c-callout c-callout--danger">
+  <span class="c-callout-title">Danger</span>
+  <p>This deletes the production database. There is no undo.</p>
+</aside>
+
+<aside class="c-callout c-callout--caveat">
+  <span class="c-callout-title">Caveat</span>
+  <p>This report is a snapshot; a browser sweep was still running at compilation.</p>
+</aside>
+
+<!-- ============================================================
+     Verdict box
+     USE WHEN: a section ends in a judgment the reader will quote.
+     ============================================================ -->
+<div class="c-verdict">
+  <span class="c-verdict-label">Verdict</span>
+  <p>The protocol mismatch between the client and the worker blocked every
+  earlier production pass. No other fix mattered until it was resolved.</p>
+</div>
+
+<!-- ============================================================
+     Footnotes
+     Put at the end of the document body, before the footer.
+     ============================================================ -->
+<section class="c-footnotes">
+  <h2 class="c-visually-hidden">Notes</h2>
+  <ol>
+    <li id="fn1">Counts come from <code>git log --oneline</code> at compile time. <a href="#s2">↩</a></li>
+  </ol>
+</section>
