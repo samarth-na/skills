@@ -82,7 +82,8 @@ Start from `components/shell.html`. Follow these output rules:
 - Prose follows the user's writing preferences. Plain, direct, one idea per
   paragraph. Remove filler and promotional adjectives.
 - Escape `<`, `>`, `&` inside every `<pre>`.
-- Tables need `<thead>`, and numbers right-align with `.c-num`.
+- Tables need `<thead>`, and numbers right-align with `.c-num`. Wrap every
+  table in `.c-table-wrap`; add `.c-table--wide` when it has 3+ prose columns.
 - Every `<img>` has `alt`. Evidence images get a `.c-figure` caption.
 - Filename: short, descriptive, hyphenated — `production-finalization.html`,
   `commits-2026-09-22.html`, `api-settings-explainer.html`.

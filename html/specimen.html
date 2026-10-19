@@ -824,6 +824,11 @@
       .c-table--dense th, .c-table--dense td { padding: 0.35rem 0.6rem; font-size: var(--c-text-xs); }
       .c-table td.c-num, .c-table th.c-num { text-align: right; font-variant-numeric: tabular-nums; }
 
+      /* Wide prose tables: hold readable column widths and let .c-table-wrap scroll.
+         Without this, narrow screens squeeze every column to min-content and rows
+         grow several lines tall. Use on tables with 3+ prose columns. */
+      .c-table--wide { min-width: 40rem; }
+
       .c-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
@@ -1818,13 +1823,13 @@
       }
 </style>
   </head>
-  <body class="c-page">
+  <body class="c-page" id="top">
     <a class="c-skip" href="#main">Skip to content</a>
 
     <header class="c-header">
       <div class="c-wrap">
-        <span class="c-eyebrow">html skill · specimen</span>
-        <h1 class="c-title">Every component</h1>
+        <span class="c-eyebrow">html skill · visual reference</span>
+        <h1 class="c-title">Specimen — every component</h1>
         <p class="c-subtitle">The visual reference: markup from components/*.html, styled by styles/base.css. Toggle the theme with the button top right.</p>
         <div class="c-meta">
           <span>Specimen, not a deliverable</span>
